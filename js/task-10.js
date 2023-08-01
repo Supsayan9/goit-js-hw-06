@@ -1,47 +1,47 @@
-
 function getRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215)
     .toString(16)
-    .padStart(6, '0')}`;
+    .padStart(6, 0)}`;
 }
 
-function createBoxes(amount) {
-  const boxesContainer = document.getElementById('boxes');
+const size = 30;
+const controls = {
+  number: document.querySelector("[type='number']"),
+  btnCreate: document.querySelector("[data-create]"),
+  btnDestroy: document.querySelector("[data-destroy]"),
+  box: document.querySelector("#boxes"),
+};
 
-  for (let i = 0; i < amount; i++) {
-    const box = document.createElement('div');
-    const size = 30 + i * 10;
+controls.btnCreate.addEventListener("click", createBoxes);
 
-    box.style.width = `${size}px`;
-    box.style.height = `${size}px`;
-    box.style.backgroundColor = getRandomHexColor();
-
-    boxesContainer.appendChild(box);
+function createBoxes() {
+  //destroyBoxes();
+  if (checkNumber()) {
+    for (let i = 0; i < Number(controls.number.value); i++) {
+      let s = size + 10 * i * Number(controls.number.step) + "px";
+      const tempElem = document.createElement("div");
+      tempElem.style.backgroundColor = getRandomHexColor();
+      tempElem.style.width = s;
+      tempElem.style.height = s;
+      controls.box.append(tempElem);
+    }
+  } else {
+    window.alert(
+      `Min number must be - ${controls.number.min}\nMax number - ${controls.number.max}`
+    );
   }
+  controls.number.value = "";
 }
 
 function destroyBoxes() {
-  const boxesContainer = document.getElementById('boxes');
-  const input = document.querySelector('input');
-
-  boxesContainer.innerHTML = '';
-  input.value = '';
-  input.max = 100;
+  controls.box.innerHTML = "";
 }
 
-const createButton = document.querySelector('[data-create]');
-const destroyButton = document.querySelector('[data-destroy]');
-const input = document.querySelector('input');
+controls.btnDestroy.addEventListener("click", destroyBoxes);
 
-createButton.addEventListener('click', () => {
-  const amount = parseInt(input.value, 10);
-
-  if (amount > 100) {
-    alert('Number should not exceed 100');
-    return;
-  }
-
-  createBoxes(amount);
-});
-
-destroyButton.addEventListener('click', destroyBoxes); 
+function checkNumber() {
+  return (
+    controls.number.value >= Number(controls.number.min) &&
+    controls.number.value <= Number(controls.number.max)
+  );
+}
